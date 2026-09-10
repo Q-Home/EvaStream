@@ -36,7 +36,9 @@ try {
     $process = proc_open(['/usr/bin/python3', "$lbpbindir/bridge.py", "$lbpconfigdir/settings.json"],
         [0=>['pipe','r'],1=>['pipe','w'],2=>['pipe','w']], $pipes);
     if (!is_resource($process)) throw new RuntimeException('Python kon niet gestart worden.');
-    fwrite($pipes[0], json_encode($input, JSON_THROW_ON_ERROR));
+    // Forward the original JSON: associative decoding turns {} into [], which
+    // Python correctly rejects as a non-object arguments value.
+    fwrite($pipes[0], $raw);
     fclose($pipes[0]);
     $stdout = stream_get_contents($pipes[1]); fclose($pipes[1]);
     $stderr = stream_get_contents($pipes[2]); fclose($pipes[2]);

@@ -4,7 +4,9 @@ Lokale bediening van EVA-verlichting, zwemstroming en trainingsprogramma's.
 Inclusief een zelfstandige Python-client voor Linux. Geen cloudaccount of
 extra Python-pakketten nodig.
 
-**Versie 0.1.0 — eerste testversie.** De API is afgeleid uit de webapp van een
+**Versie 0.1.1 — testversie.** Herstelt de melding 'Onbekende parameters' bij
+opdrachten zonder parameters, zoals status ophalen, pauzeren en stoppen.
+De API is afgeleid uit de webapp van een
 EVA Controller. Uitlezen is op de controller gecontroleerd; schrijfopdrachten
 zijn met een nagebootste controller getest. Installatie op een echte LoxBerry
 4 en fysieke bediening moeten nog worden gecontroleerd. Geen officieel
@@ -72,7 +74,7 @@ python3 tools/build.py
 ```
 
 Tests gebruiken een lokale nepcontroller en activeren geen hardware.
-Het bouwscript maakt `dist/EvaStream-0.1.0.zip` met Unix-rechten en LF-regels,
+Het bouwscript maakt `dist/EvaStream-0.1.1.zip` met Unix-rechten en LF-regels,
 zonder tests, caches of persoonlijke instellingen. Automatische updates zijn
 voor deze eerste testversie uitgeschakeld.
 
