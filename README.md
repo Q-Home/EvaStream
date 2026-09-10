@@ -4,7 +4,7 @@ Lokale bediening van EVA-verlichting, zwemstroming en trainingsprogramma's.
 Inclusief een zelfstandige Python-client voor Linux. Geen cloudaccount of
 extra Python-pakketten nodig.
 
-**Versie 0.1.1 — testversie.** Herstelt de melding 'Onbekende parameters' bij
+**Versie 0.1.2 — testversie.** Ondersteunt automatische updates en herstelt de melding 'Onbekende parameters' bij
 opdrachten zonder parameters, zoals status ophalen, pauzeren en stoppen.
 De API is afgeleid uit de webapp van een
 EVA Controller. Uitlezen is op de controller gecontroleerd; schrijfopdrachten
@@ -74,9 +74,23 @@ python3 tools/build.py
 ```
 
 Tests gebruiken een lokale nepcontroller en activeren geen hardware.
-Het bouwscript maakt `dist/EvaStream-0.1.1.zip` met Unix-rechten en LF-regels,
-zonder tests, caches of persoonlijke instellingen. Automatische updates zijn
-voor deze eerste testversie uitgeschakeld.
+Het bouwscript maakt `dist/EvaStream-0.1.2.zip` met Unix-rechten en LF-regels,
+zonder tests, caches of persoonlijke instellingen.
+
+## Automatische updates
+
+Installeer versie 0.1.2 eenmalig handmatig wanneer je nog 0.1.0 of 0.1.1
+gebruikt. Verwijder de bestaande plugin niet; instellingen blijven behouden.
+Daarna kun je automatische updates inschakelen in het LoxBerry-pluginbeheer.
+De plugin declareert de ondersteuning; je eigen LoxBerry-updatevoorkeur blijft
+bepalen of updates automatisch worden geinstalleerd.
+
+LoxBerry leest `release.cfg` op de hoofdbranch van deze repository. Elke
+update verwijst naar een ZIP van een vaste Git-commit, zodat het aangeboden
+versienummer en de inhoud van de download bij elkaar blijven horen.
+Bij een nieuwe publicatie: verhoog `plugin.cfg`, commit de versie, en werk
+daarna `release.cfg` bij met het versienummer en het archief van die commit.
+Zie [CHANGELOG.md](CHANGELOG.md) voor wijzigingen.
 
 Technische basis: [LoxBerry-pluginstructuur](https://wiki.loxberry.de/entwickler/grundlagen_zur_erstellung_eines_plugins),
 [officieel LoxBerry 4-voorbeeld](https://github.com/mschlenstedt/LoxBerry-Plugin-SamplePlugin-V4),
