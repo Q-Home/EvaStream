@@ -4,6 +4,18 @@
   let preview = el('preview').checked;
   const mode = () => { el('mode').textContent = preview ? 'Voorbeeldmodus: opdrachten worden getoond, niet verstuurd.' : 'Bediening actief: opdrachten worden direct uitgevoerd.'; };
   mode();
+  function loxoneLinks(enabled, key) {
+    el('loxone-links').hidden = !enabled || !key;
+    el('loxone-message').textContent = enabled && key ? 'Kopieer deze velden naar Loxone Config. Het statusadres haalt de actuele controllerstatus op.' : 'Schakel de koppeling hierboven in en sla op om de adressen te tonen.';
+    if (!key) return;
+    const base = el('eva').dataset.loxonePath + '?token=' + encodeURIComponent(key);
+    el('loxone-status-url').value = window.location.origin + base + '&command=status';
+    el('loxone-output-host').value = window.location.origin;
+    el('loxone-jet-url').value = base + '&command=jet&speed=40&minutes=15';
+    el('loxone-speed-url').value = base + '&command=speed&percent=<v>';
+    el('loxone-stop-url').value = base + '&command=stop';
+  }
+  loxoneLinks(el('eva').dataset.loxoneEnabled === '1', el('eva').dataset.loxoneKey);
   async function request(payload) {
     const response = await fetch('api.php', {method:'POST', headers:{'Content-Type':'application/json','X-CSRF-Token':el('eva').dataset.token}, body:JSON.stringify(payload)});
     const result = await response.json();
@@ -29,7 +41,8 @@
   function validNumber(id) { return el(id).reportValidity(); }
   function form(id, fn) { el(id).addEventListener('submit', e => { e.preventDefault(); busy(fn); }); }
   form('settings', async () => {
-    const result = await request({command:'save', host:el('host').value.trim(), preview:el('preview').checked});
+    const result = await request({command:'save', host:el('host').value.trim(), preview:el('preview').checked, loxone_enabled:el('loxone-enabled').checked});
+    loxoneLinks(result.loxone_enabled, result.loxone_token);
     preview = el('preview').checked; mode(); el('result').textContent = result.output;
     options('user', [['','Eerst ophalen']]); options('program-id', [['','Eerst ophalen']]);
     el('status').textContent = 'Instellingen opgeslagen. Haal de actuele status op.';

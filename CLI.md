@@ -18,6 +18,10 @@ python3 bin/eva.py colors
 
 ## Bedienen
 
+Voor Loxone virtuele HTTP-in- en uitgangen: zie [LOXONE.md](LOXONE.md).
+Alleen lichtsterkte aanpassen zonder kleurwijziging:
+`python3 bin/eva.py --execute brightness 60 --zone 0`.
+
 Zonder `--execute` toont het script alleen de geplande POST-opdrachten.
 De voorbeelden hieronder voeren de bediening echt uit.
 

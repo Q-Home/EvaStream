@@ -1,5 +1,13 @@
 # Wijzigingen
 
+## 0.2.0
+
+- Loxone virtuele HTTP-uitgangen voor jet, programma's, licht en stand-by.
+- Numerieke statuspagina voor virtuele HTTP-ingangen, inclusief beschikbaarheid.
+- Optionele toegangssleutel en kopieerbare adressen in de pluginpagina.
+- Aparte brightness-opdracht die de lichtkleur ongemoeid laat.
+- Gezamenlijke opdrachtvergrendeling en voorbeeldmodus voor web en Loxone.
+
 ## 0.1.2
 
 - Ondersteuning voor automatische LoxBerry-updates via GitHub.

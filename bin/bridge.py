@@ -15,6 +15,7 @@ PARAMS = {
     'standby': {'state': None},
     'light': {'color': None, 'zone': '--zone', 'brightness': '--brightness'},
     'speed': {'percent': None},
+    'brightness': {'percent': None, 'zone': '--zone'},
     'jet': {'speed': '--speed', 'minutes': '--minutes'},
     'program': {'id': None, 'user': '--user', 'slot': '--slot',
                 'speed': '--speed', 'cue_index': '--cue-index'},

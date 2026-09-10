@@ -88,6 +88,10 @@ class ControllerTests(unittest.TestCase):
         self.run_command('light', {'color':'off'})
         self.assertEqual(Handler.writes, [('/start_cue', {'id':256,'zone':0})])
 
+    def test_brightness_does_not_change_color_or_standby(self):
+        self.assertTrue(self.run_command('brightness', {'percent':60,'zone':0})['ok'])
+        self.assertEqual(Handler.writes, [('/intensity', {'zone':0,'intensity':60})])
+
     def test_jet_start_order_and_seconds(self):
         self.assertTrue(self.run_command('jet', {'speed':40,'minutes':15})['ok'])
         self.assertEqual(Handler.writes, [('/reset_graph',None),

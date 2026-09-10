@@ -13,8 +13,7 @@ try {
     $input = json_decode($raw, true, 16, JSON_THROW_ON_ERROR);
     if (!is_array($input)) throw new RuntimeException('Ongeldige aanvraag.');
     // Serialize commands across browser sessions to prevent interleaved starts.
-    $lock = fopen("$lbpconfigdir/command.lock", 'c');
-    if (!$lock || !flock($lock, LOCK_EX | LOCK_NB)) eva_json(['ok'=>false,'error'=>'Een opdracht is nog bezig.'], 409);
+    $lock = eva_lock();
     if (($input['command'] ?? '') === 'save') {
         $host = $input['host'] ?? '';
         if (!is_string($host) || !filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) ||
@@ -22,29 +21,29 @@ try {
             throw new RuntimeException('Vul een lokaal IPv4-adres in.');
         }
         if (!isset($input['preview']) || !is_bool($input['preview'])) throw new RuntimeException('Ongeldige voorbeeldmodus.');
+        $settings = eva_config();
+        $settings['host'] = $host;
+        $settings['preview'] = $input['preview'];
+        if (isset($input['loxone_enabled'])) {
+            if (!is_bool($input['loxone_enabled'])) throw new RuntimeException('Ongeldige Loxone-instelling.');
+            $settings['loxone_enabled'] = $input['loxone_enabled'];
+        }
+        if ($settings['loxone_enabled'] && empty($settings['loxone_token'])) {
+            $settings['loxone_token'] = bin2hex(random_bytes(32));
+        }
         $tmp = tempnam($lbpconfigdir, 'settings-');
         try {
-            if ($tmp === false || file_put_contents($tmp, json_encode(['host'=>$host,'preview'=>$input['preview']], JSON_THROW_ON_ERROR)) === false) {
+            if ($tmp === false || file_put_contents($tmp, json_encode($settings, JSON_THROW_ON_ERROR)) === false) {
                 throw new RuntimeException('Instellingen opslaan mislukt.');
             }
             chmod($tmp, 0600);
             if (!rename($tmp, "$lbpconfigdir/settings.json")) throw new RuntimeException('Instellingen vervangen mislukt.');
         } finally { if ($tmp !== false && is_file($tmp)) unlink($tmp); }
-        eva_json(['ok'=>true,'output'=>'Instellingen opgeslagen.']);
+        eva_json(['ok'=>true,'output'=>'Instellingen opgeslagen.', 'loxone_token'=>$settings['loxone_token'], 'loxone_enabled'=>$settings['loxone_enabled']]);
     }
-    // Array form invokes Python directly, without shell interpolation.
-    $process = proc_open(['/usr/bin/python3', "$lbpbindir/bridge.py", "$lbpconfigdir/settings.json"],
-        [0=>['pipe','r'],1=>['pipe','w'],2=>['pipe','w']], $pipes);
-    if (!is_resource($process)) throw new RuntimeException('Python kon niet gestart worden.');
     // Forward the original JSON: associative decoding turns {} into [], which
     // Python correctly rejects as a non-object arguments value.
-    fwrite($pipes[0], $raw);
-    fclose($pipes[0]);
-    $stdout = stream_get_contents($pipes[1]); fclose($pipes[1]);
-    $stderr = stream_get_contents($pipes[2]); fclose($pipes[2]);
-    proc_close($process);
-    $result = json_decode($stdout, true);
-    if (!is_array($result)) throw new RuntimeException('Geen geldig antwoord van de plugin. ' . substr($stderr, 0, 500));
+    $result = eva_bridge($raw);
     eva_json($result, !empty($result['ok']) ? 200 : 502);
 } catch (Throwable $error) {
     eva_json(['ok'=>false,'error'=>$error->getMessage()], 400);

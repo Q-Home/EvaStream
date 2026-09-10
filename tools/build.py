@@ -7,7 +7,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DIRECTORIES = ('bin', 'config', 'icons', 'templates', 'webfrontend')
-FILES = ('plugin.cfg', 'preinstall.sh', 'preupgrade.sh', 'postinstall.sh', 'README.md', 'CLI.md', 'CHANGELOG.md')
+FILES = ('plugin.cfg', 'preinstall.sh', 'preupgrade.sh', 'postinstall.sh', 'README.md', 'CLI.md', 'CHANGELOG.md', 'LOXONE.md')
 
 
 def build(destination=None):

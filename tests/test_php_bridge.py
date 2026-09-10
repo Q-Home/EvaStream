@@ -18,6 +18,10 @@ class PHPBridgeTests(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
         self.path = Path(self.temp.name)
+        self.bin = self.path / 'bin'
+        shutil.copytree(ROOT / 'bin', self.bin, ignore=shutil.ignore_patterns('__pycache__'))
+        helper = self.bin / 'http.php'
+        helper.write_text(helper.read_text(encoding='utf-8').replace("'/usr/bin/python3'", "getenv('EVA_TEST_PYTHON')"), encoding='utf-8')
         (self.path / 'settings.json').write_text(
             json.dumps({'host': '192.0.2.18', 'preview': True}), encoding='utf-8')
         shutil.copy(ROOT / 'webfrontend/htmlauth/common.php', self.path / 'common.php')
@@ -37,7 +41,7 @@ require __DIR__ . '/api.php';
 ''', encoding='utf-8')
 
     def request(self, payload):
-        env = dict(os.environ, EVA_TEST_BIN=str(ROOT / 'bin'), EVA_TEST_PYTHON=sys.executable)
+        env = dict(os.environ, EVA_TEST_BIN=str(self.bin), EVA_TEST_PYTHON=sys.executable)
         result = subprocess.run([PHP, '-d', 'include_path=' + str(self.path),
                                  str(self.path / 'runner.php')],
                                 input=json.dumps(payload), capture_output=True, text=True,

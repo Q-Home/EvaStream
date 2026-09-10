@@ -9,7 +9,7 @@ LBWeb::lbheader('EVAstream', 'https://github.com/Q-Home/EvaStream', 'help.html',
 function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
 ?>
 <link rel="stylesheet" href="style.css">
-<main id="eva" data-token="<?=h($evaToken)?>">
+<main id="eva" data-token="<?=h($evaToken)?>" data-loxone-path="<?=h('/plugins/' . basename($lbpconfigdir) . '/loxone.php')?>" data-loxone-key="<?=h($evaSettings['loxone_token'])?>" data-loxone-enabled="<?=$evaSettings['loxone_enabled']?'1':'0'?>">
   <p class="eyebrow">Q-HOME · LOKALE BEDIENING</p>
   <h1>Je zwembad, onder controle.</h1>
   <p id="mode">Voorbeeldmodus: opdrachten worden getoond, niet verstuurd.</p>
@@ -18,10 +18,27 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
     <form id="settings">
       <label>Controlleradres<input id="host" placeholder="IPv4-adres van je controller" value="<?=h($evaSettings['host'])?>" required></label>
       <label class="check"><input id="preview" type="checkbox" <?=$evaSettings['preview']?'checked':''?>> Voorbeeldmodus</label>
+      <label class="check"><input id="loxone-enabled" type="checkbox" <?=$evaSettings['loxone_enabled']?'checked':''?>> Loxone HTTP-koppeling inschakelen</label>
       <button>Instellingen opslaan</button>
       <button type="button" id="refresh">Status en programma’s ophalen</button>
     </form>
     <p id="status" role="status">Sla het controlleradres op en haal de status op.</p>
+  </section>
+  <section class="panel">
+    <h2>Loxone: virtuele in- en uitgangen</h2>
+    <p id="loxone-message">Schakel de koppeling hierboven in en sla op om de adressen te tonen.</p>
+    <div id="loxone-links" hidden>
+      <label>URL voor virtuele HTTP-ingang<textarea id="loxone-status-url" readonly rows="3"></textarea></label>
+      <p>Stel de opvraagcyclus in op 10 seconden en de timeout op 15.000 ms.</p>
+      <label>Adres voor virtuele uitgang<input id="loxone-output-host" readonly></label>
+      <label>Opdracht bij AAN: jet starten (40%, 15 minuten)<textarea id="loxone-jet-url" readonly rows="3"></textarea></label>
+      <label>Opdracht bij AAN: jetsnelheid (analoge waarde)<textarea id="loxone-speed-url" readonly rows="3"></textarea></label>
+      <label>Opdracht bij AAN: stoppen<textarea id="loxone-stop-url" readonly rows="3"></textarea></label>
+      <p>HTTP-methode: GET. Laat herhaling uit voor startopdrachten. De voorbeeldmodus geldt ook voor Loxone.</p>
+      <p>Commandherkenning voor status: <code>online=\v</code>, <code>standby=\v</code>, <code>jet_running=\v</code>, <code>speed_percent=\v</code>, <code>light_0_brightness=\v</code>.</p>
+      <p>De adressen bevatten je toegangssleutel: bewaar ze binnen je eigen netwerk.
+      <a href="https://github.com/Q-Home/EvaStream/blob/main/LOXONE.md" target="_blank" rel="noreferrer">Volledige handleiding en alle opdrachten</a>.</p>
+    </div>
   </section>
   <div class="grid">
     <section class="panel"><h2>Verlichting</h2>

@@ -73,6 +73,9 @@ def main(argv=None):
     p.add_argument('--brightness', type=bounded(0, 100), default=50)
     p = sub.add_parser('speed')
     p.add_argument('percent', type=bounded(30, 100))
+    p = sub.add_parser('brightness')
+    p.add_argument('percent', type=bounded(0, 100))
+    p.add_argument('--zone', type=bounded(0, 3), default=0)
     p = sub.add_parser('jet')
     p.add_argument('--speed', required=True, type=bounded(30, 100))
     p.add_argument('--minutes', required=True, type=bounded(1, 120))
@@ -100,6 +103,11 @@ def main(argv=None):
         commands = [('/stop_program', None)]
     elif command == 'speed':
         commands = [('/speed_gain', {'speed_gain': args.percent})]
+    elif command == 'brightness':
+        zones = eva.get('/zones')
+        if args.zone >= len(zones):
+            raise ValueError('Deze zone bestaat niet.')
+        commands = [('/intensity', {'zone': args.zone, 'intensity': args.percent})]
     elif command == 'light':
         zones = eva.get('/zones')
         if args.zone >= len(zones):

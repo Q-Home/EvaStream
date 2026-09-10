@@ -4,8 +4,9 @@ Lokale bediening van EVA-verlichting, zwemstroming en trainingsprogramma's.
 Inclusief een zelfstandige Python-client voor Linux. Geen cloudaccount of
 extra Python-pakketten nodig.
 
-**Versie 0.1.2 — testversie.** Ondersteunt automatische updates en herstelt de melding 'Onbekende parameters' bij
-opdrachten zonder parameters, zoals status ophalen, pauzeren en stoppen.
+**Versie 0.2.0 — testversie.** Koppelt Loxone via virtuele HTTP-in- en
+uitgangen, met statusuitlezing en een eigen toegangssleutel. Ondersteunt
+automatische updates en bevat de eerdere parametercorrectie.
 De API is afgeleid uit de webapp van een
 EVA Controller. Uitlezen is op de controller gecontroleerd; schrijfopdrachten
 zijn met een nagebootste controller getest. Installatie op een echte LoxBerry
@@ -36,6 +37,15 @@ LoxBerry-aanmelding en is alleen beschikbaar onder de beveiligde pluginpagina.
 - Pauzeren, hervatten, stoppen en globale stand-by.
 - Status, zones, gebruikers en programma's rechtstreeks ophalen.
 - Instellingen blijven bewaard tijdens pluginupdates.
+- Loxone HTTP-bediening en numerieke status voor virtuele HTTP-ingangen.
+
+## Loxone
+
+Vink in de plugin **Loxone HTTP-koppeling inschakelen** aan en sla op.
+De plugin toont kopieerbare adressen voor Loxone Config. Gebruik een virtuele
+HTTP-ingang voor status (opvraagcyclus 10 seconden) en virtuele uitgangen
+met GET voor bediening. Voorbeeldmodus geldt ook voor deze koppeling.
+Zie [LOXONE.md](LOXONE.md) voor alle commando's en commandherkenningen.
 
 Er worden geen programma's, gebruikers of netwerkinstellingen op de controller
 aangemaakt of gewijzigd. Een programma starten of jet starten schakelt
@@ -74,7 +84,7 @@ python3 tools/build.py
 ```
 
 Tests gebruiken een lokale nepcontroller en activeren geen hardware.
-Het bouwscript maakt `dist/EvaStream-0.1.2.zip` met Unix-rechten en LF-regels,
+Het bouwscript maakt `dist/EvaStream-0.2.0.zip` met Unix-rechten en LF-regels,
 zonder tests, caches of persoonlijke instellingen.
 
 ## Automatische updates
