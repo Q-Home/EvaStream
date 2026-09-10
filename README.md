@@ -48,11 +48,11 @@ kan bij een fout gedeeltelijk uitgevoerd zijn.
 ## Los script
 
 ```bash
-python3 bin/eva.py --host 192.168.1.18 status
-python3 bin/eva.py --host 192.168.1.18 light blue --brightness 50
-python3 bin/eva.py --host 192.168.1.18 --execute jet --speed 40 --minutes 15
-python3 bin/eva.py --host 192.168.1.18 --execute program 0 --user 0 --speed 40
-python3 bin/eva.py --host 192.168.1.18 --execute stop
+python3 bin/eva.py --host CONTROLLER_IP status
+python3 bin/eva.py --host CONTROLLER_IP light blue --brightness 50
+python3 bin/eva.py --host CONTROLLER_IP --execute jet --speed 40 --minutes 15
+python3 bin/eva.py --host CONTROLLER_IP --execute program 0 --user 0 --speed 40
+python3 bin/eva.py --host CONTROLLER_IP --execute stop
 ```
 
 Zonder `--execute` toont het script wijzigingen alleen als voorbeeld.
