@@ -13,7 +13,7 @@ session_write_close();
 LBWeb::lbheader('EVAstream', 'https://github.com/Q-Home/EvaStream', 'help.html', true);
 function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
 ?>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=<?=h(hash_file('sha256', __DIR__ . '/style.css'))?>">
 <main id="eva" data-token="<?=h($evaToken)?>" data-loxone-path="<?=h('/plugins/' . basename($lbpconfigdir) . '/loxone.php')?>" data-loxone-key="<?=h($evaSettings['loxone_token'])?>" data-loxone-enabled="<?=$evaSettings['loxone_enabled']?'1':'0'?>">
   <p class="eyebrow">Q-HOME · LOKALE BEDIENING</p>
   <h1>Je zwembad, onder controle.</h1>
@@ -92,5 +92,5 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
   </div>
   <section class="panel"><h2>Laatste resultaat</h2><pre id="result" aria-live="polite">Nog geen opdrachten uitgevoerd.</pre></section>
 </main>
-<script src="app.js" defer></script>
+<script src="app.js?v=<?=h(hash_file('sha256', __DIR__ . '/app.js'))?>" defer></script>
 <?php LBWeb::lbfooter(); ?>

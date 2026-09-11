@@ -1,5 +1,12 @@
 # Wijzigingen
 
+## 0.2.4
+
+- Laad na updates altijd de bijbehorende JavaScript en opmaak via een inhoudshash.
+  Een eerder bewaard script kon het VPN-adres blijven invullen terwijl de
+  lokale aansluiting al zichtbaar was. Beide Loxone-adresvelden volgen nu
+  ook na een update de gekozen eth0/eth1-aansluiting.
+
 ## 0.2.3
 
 - Gebruik lokale IPv4-adressen van eth0/eth1 voor de Loxone-URL's, in plaats
