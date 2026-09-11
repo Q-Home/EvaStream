@@ -17,9 +17,12 @@ wanneer Loxone de hardware mag bedienen. Installatie en pagina openen starten
 zelf geen jet of programma.
 
 Gebruik het **LoxBerry-adres**, niet het EVA Controller-adres. De Miniserver
-moet dit adres kunnen bereiken. Als je de plugin via een externe proxy of
-andere hostnaam opent, vervang die in de getoonde adressen door het lokale
-LoxBerry-adres. De toegangssleutel geeft bedieningsrechten; deel de URL's niet
+moet dit adres kunnen bereiken. Vanaf 0.2.3 zoekt de plugin het IPv4-adres op
+eth0 en eth1 op de LoxBerry zelf. eth0 krijgt voorrang; bij twee aansluitingen
+kun je de juiste aansluiting kiezen. Deze keuze wordt per browser onthouden.
+VPN-adressen uit de browser worden niet overgenomen. Als geen geschikt adres
+gevonden wordt, toont de pagina een melding in plaats van een VPN-adres.
+Herlaad de pagina na een IP-wijziging. De toegangssleutel geeft bedieningsrechten; deel de URL's niet
 publiek. Uitschakelen van de koppeling maakt alle Loxone-opdrachten ontoegankelijk.
 
 ## 2. Virtuele HTTP-ingang: status

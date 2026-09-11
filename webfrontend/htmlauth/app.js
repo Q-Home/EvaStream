@@ -4,18 +4,32 @@
   let preview = el('preview').checked;
   const mode = () => { el('mode').textContent = preview ? 'Voorbeeldmodus: opdrachten worden getoond, niet verstuurd.' : 'Bediening actief: opdrachten worden direct uitgevoerd.'; };
   mode();
+  let loxoneEnabled = el('eva').dataset.loxoneEnabled === '1';
+  let loxoneKey = el('eva').dataset.loxoneKey;
+  const lanChoiceKey = 'evastream-lan-' + el('eva').dataset.loxonePath;
+  try {
+    const preferred = localStorage.getItem(lanChoiceKey);
+    const option = [...el('loxone-lan').options].find(o => o.dataset.interface === preferred);
+    if (option) el('loxone-lan').value = option.value;
+  } catch (_) {}
   function loxoneLinks(enabled, key) {
-    el('loxone-links').hidden = !enabled || !key;
-    el('loxone-message').textContent = enabled && key ? 'Kopieer deze velden naar Loxone Config. Het statusadres haalt de actuele controllerstatus op.' : 'Schakel de koppeling hierboven in en sla op om de adressen te tonen.';
-    if (!key) return;
+    loxoneEnabled = enabled; loxoneKey = key;
+    const origin = el('loxone-lan').value;
+    el('loxone-links').hidden = !enabled || !key || !origin;
+    el('loxone-message').textContent = !origin ? 'Geen lokaal adres gevonden op eth0 of eth1. Controleer de netwerkaansluiting van de LoxBerry en herlaad deze pagina. Er wordt geen VPN-adres ingevuld.' : (enabled && key ? 'Kopieer deze velden naar Loxone Config. Het statusadres haalt de actuele controllerstatus op.' : 'Schakel de koppeling hierboven in en sla op om de adressen te tonen.');
+    if (!key || !origin) return;
     const base = el('eva').dataset.loxonePath + '?token=' + encodeURIComponent(key);
-    el('loxone-status-url').value = window.location.origin + base + '&command=status';
-    el('loxone-output-host').value = window.location.origin;
+    el('loxone-status-url').value = origin + base + '&command=status';
+    el('loxone-output-host').value = origin;
     el('loxone-jet-url').value = base + '&command=jet&speed=40&minutes=15';
     el('loxone-speed-url').value = base + '&command=speed&percent=<v>';
     el('loxone-stop-url').value = base + '&command=stop';
   }
-  loxoneLinks(el('eva').dataset.loxoneEnabled === '1', el('eva').dataset.loxoneKey);
+  loxoneLinks(loxoneEnabled, loxoneKey);
+  el('loxone-lan').addEventListener('change', () => {
+    try { localStorage.setItem(lanChoiceKey, el('loxone-lan').selectedOptions[0]?.dataset.interface || ''); } catch (_) {}
+    loxoneLinks(loxoneEnabled, loxoneKey);
+  });
   async function request(payload) {
     const response = await fetch('api.php', {method:'POST', headers:{'Content-Type':'application/json','X-CSRF-Token':el('eva').dataset.token}, body:JSON.stringify(payload)});
     const result = await response.json();

@@ -1,6 +1,11 @@
 <?php
 require_once __DIR__ . '/common.php';
 require_once 'loxberry_web.php';
+require_once "$lbpbindir/network.php";
+$evaLanAddresses = eva_detect_lan();
+$evaLocalScheme = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https' : 'http';
+$evaLocalPort = (int)($_SERVER['SERVER_PORT'] ?? 80);
+$evaPortSuffix = ($evaLocalPort > 0 && $evaLocalPort < 65536 && $evaLocalPort !== ($evaLocalScheme === 'https' ? 443 : 80)) ? ':' . $evaLocalPort : '';
 eva_session();
 $evaSettings = eva_config();
 $evaToken = $_SESSION['csrf'];
@@ -26,6 +31,13 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
   </section>
   <section class="panel">
     <h2>Loxone: virtuele in- en uitgangen</h2>
+    <label>Lokaal LoxBerry-adres voor Loxone<select id="loxone-lan">
+      <?php if (!$evaLanAddresses): ?><option value="">Geen IPv4-adres gevonden op eth0 of eth1</option><?php endif; ?>
+      <?php foreach ($evaLanAddresses as $lan): ?>
+      <option data-interface="<?=h($lan['interface'])?>" value="<?=h($evaLocalScheme . '://' . $lan['address'] . $evaPortSuffix)?>"><?=h($lan['interface'] . ' · ' . $lan['address'])?></option>
+      <?php endforeach; ?>
+    </select></label>
+    <p>Automatisch gevonden op de LoxBerry. Bij twee aansluitingen kies je het netwerk dat de Miniserver kan bereiken. Je keuze wordt in deze browser onthouden.</p>
     <p id="loxone-message">Schakel de koppeling hierboven in en sla op om de adressen te tonen.</p>
     <div id="loxone-links" hidden>
       <label>URL voor virtuele HTTP-ingang<textarea id="loxone-status-url" readonly rows="3"></textarea></label>

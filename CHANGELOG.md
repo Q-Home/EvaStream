@@ -1,5 +1,12 @@
 # Wijzigingen
 
+## 0.2.3
+
+- Gebruik lokale IPv4-adressen van eth0/eth1 voor de Loxone-URL's, in plaats
+  van het browseradres dat via VPN kan lopen.
+- Bied een aansluitingkeuze als beide interfaces een adres hebben.
+- Meld ontbrekende LAN-adressen zonder terug te vallen op het VPN-adres.
+
 ## 0.2.2
 
 - Voeg session_state, session_active, session_paused en session_locked toe aan
