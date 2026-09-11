@@ -72,6 +72,26 @@ require __DIR__ . '/loxone.php';
             self.fake_bridge(reply)
             self.assertEqual(self.gateway({'token':TOKEN,'command':'status'}), 'online=0\n')
 
+    def test_session_status_and_lock_matrix(self):
+        for state, number in [('idle',0), ('running',1), ('paused',2), ('stopped',3)]:
+            for cue in (-2, 4):
+                for standby in (False, True):
+                    with self.subTest(state=state, cue=cue, standby=standby):
+                        self.fake_bridge({'ok':True,'data':{'standby':standby,
+                            'speed_gain':40,'zones':[], 'stream':{'state':state,'cue':cue}}})
+                        fields = dict(line.split('=') for line in self.gateway({'token':TOKEN}).strip().splitlines())
+                        active = state in ('running','paused')
+                        self.assertEqual(fields['session_state'], str(number))
+                        self.assertEqual(fields['session_active'], str(int(active)))
+                        self.assertEqual(fields['session_paused'], str(int(state == 'paused')))
+                        self.assertEqual(fields['session_locked'], str(int(active and cue != -2)))
+
+    def test_unknown_session_lock_is_not_reported_as_unlocked(self):
+        for stream in ({'state':'paused'}, {'state':'unknown','cue':4}):
+            self.fake_bridge({'ok':True,'data':{'standby':True,'speed_gain':40,'zones':[], 'stream':stream}})
+            fields = dict(line.split('=') for line in self.gateway({'token':TOKEN}).strip().splitlines())
+            self.assertEqual(fields['session_locked'], '-1')
+
     def test_analogue_whole_decimal_and_preview(self):
         result = json.loads(self.gateway({'token':TOKEN,'command':'speed','percent':'40.000'}))
         self.assertTrue(result['ok'], result)

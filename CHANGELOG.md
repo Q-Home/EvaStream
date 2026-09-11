@@ -1,5 +1,13 @@
 # Wijzigingen
 
+## 0.2.2
+
+- Voeg session_state, session_active, session_paused en session_locked toe aan
+  de bestaande Loxone-statuspagina.
+- Meld de trainingsblokkering ook bij pauze en stand-by; standalone zwemmen
+  blokkeert de verlichting niet. Onbekende toestand wordt -1, niet vrij.
+- Documenteer commandherkenning en Loxone-logica voor een blokkademelding.
+
 ## 0.2.1
 
 - Weiger licht- en brightness-opdrachten naar zone 0 wanneer een training

@@ -53,7 +53,20 @@ function eva_status_values(array $s, bool $preview): array {
         throw new RuntimeException('Onvolledige controllerstatus.');
     }
     $state = $s['stream']['state'];
+    $sessionState = ['idle'=>0,'running'=>1,'paused'=>2,'stopped'=>3][$state] ?? -1;
+    $sessionActive = in_array($state, ['running', 'paused'], true);
+    // Training ownership survives pause and standby. Standalone cue -2
+    // does not lock shared lighting. Missing information is not "unlocked".
+    $sessionLocked = $sessionState === -1 ? -1 : 0;
+    if ($sessionActive) {
+        $cue = $s['stream']['cue'] ?? null;
+        $sessionLocked = is_int($cue) ? (int)($cue !== -2) : -1;
+    }
     $values = ['online'=>1, 'preview'=>(int)$preview, 'standby'=>(int)$s['standby'],
+        'session_state'=>$sessionState,
+        'session_active'=>$sessionState === -1 ? -1 : (int)$sessionActive,
+        'session_paused'=>$sessionState === -1 ? -1 : (int)($state === 'paused'),
+        'session_locked'=>$sessionLocked,
         'jet_running'=>(int)($state === 'running' && !$s['standby']),
         'jet_paused'=>(int)($state === 'paused'),
         'jet_state'=>['idle'=>0,'running'=>1,'paused'=>2,'stopped'=>3][$state] ?? -1,

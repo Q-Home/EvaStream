@@ -36,6 +36,7 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
       <label>Opdracht bij AAN: stoppen<textarea id="loxone-stop-url" readonly rows="3"></textarea></label>
       <p>HTTP-methode: GET. Laat herhaling uit voor startopdrachten. De voorbeeldmodus geldt ook voor Loxone.</p>
       <p>Commandherkenning voor status: <code>online=\v</code>, <code>standby=\v</code>, <code>jet_running=\v</code>, <code>speed_percent=\v</code>, <code>light_0_brightness=\v</code>.</p>
+      <p>Sessie: <code>session_state=\v</code> (0 vrij, 1 lopend, 2 gepauzeerd, 3 gestopt), <code>session_active=\v</code>, <code>session_paused=\v</code> en <code>session_locked=\v</code> (1 = training blokkeert zone 0). Waarde -1 betekent onbekend. Gebruik de terugmelding alleen als <code>online=1</code>.</p>
       <p>De adressen bevatten je toegangssleutel: bewaar ze binnen je eigen netwerk.
       <a href="https://github.com/Q-Home/EvaStream/blob/main/LOXONE.md" target="_blank" rel="noreferrer">Volledige handleiding en alle opdrachten</a>.</p>
     </div>

@@ -43,6 +43,10 @@ Voeg daaronder virtuele HTTP-ingangscommando's toe met deze commandherkenning:
 |---|---|---|
 | Status beschikbaar | `online=\v` | 1 = status succesvol uitgelezen, 0 = nu niet beschikbaar |
 | Voorbeeldmodus | `preview=\v` | 1 = bediening wordt alleen getoond |
+| Sessie geblokkeerd | `session_locked=\v` | 1 = lopende/gepauzeerde training beheert zone 0, 0 = niet geblokkeerd, -1 = onbekend |
+| Sessie actief | `session_active=\v` | 1 = running of paused, inclusief standalone; 0 = idle/stopped, -1 = onbekend |
+| Sessie gepauzeerd | `session_paused=\v` | 1 = paused, 0 = overige bekende toestanden, -1 = onbekend |
+| Sessiestatus | `session_state=\v` | 0 idle, 1 running, 2 paused, 3 stopped, -1 onbekend; onafhankelijk van stand-by |
 | Stand-by | `standby=\v` | 1 = globale stand-by aan |
 | Jet draait | `jet_running=\v` | 1 = controller meldt running en stand-by staat uit |
 | Jet gepauzeerd | `jet_paused=\v` | 1 = stream.state is paused |
@@ -58,6 +62,17 @@ Voeg daaronder virtuele HTTP-ingangscommando's toe met deze commandherkenning:
 | Lichtcue zone 0 | `light_0_cue=\v` | 256 = uit, 261 = blauw, 264 = wit |
 
 Voor overige zones vervang je `light_0_` door `light_1_`, `light_2_` of `light_3_`.
+
+De sessievelden zijn beschikbaar vanaf **0.2.2**, via dezelfde status-URL.
+Voeg ze als analoge ingangscommando's toe zodat ook -1 (onbekend) bewaard blijft.
+Voor een melding 'Sessie geblokkeerd' gebruik je `online = 1 EN session_locked = 1`.
+Lichtbediening van zone 0 kun je vrijgeven bij `online = 1 EN session_locked = 0`.
+Stand-by maakt een gepauzeerde training niet vrij. Bij standalone zwemmen kan
+`session_active=1` zijn terwijl `session_locked=0` blijft. De term sessieblokkering
+duidt hier op trainingseigenaarschap van zone 0; niet op het kinderslot, een
+netwerkstoring of de kortdurende opdrachtvergrendeling van de plugin.
+Koppel de melding eventueel aan een handmatige knop met `command=stop`.
+De statusmelding stopt of hervat zelf niets.
 Alleen door de controller geleverde zones en velden worden gepubliceerd.
 De status is softwareterugmelding, geen onafhankelijke fysieke sensor.
 Programmagegevens kunnen buiten een programma oude of niet-relevante waarden
