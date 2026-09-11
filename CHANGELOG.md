@@ -1,5 +1,13 @@
 # Wijzigingen
 
+## 0.2.1
+
+- Weiger licht- en brightness-opdrachten naar zone 0 wanneer een training
+  loopt of gepauzeerd is, net als de EVA-webapp. Dit geldt ook in stand-by.
+- Controleer de actuele streamstatus voor deze gedeelde verlichtingszone.
+- Laat overige zones en standalone zwemmen ongemoeid.
+- Stop of hervat nooit automatisch een training om een lichtopdracht uit te voeren.
+
 ## 0.2.0
 
 - Loxone virtuele HTTP-uitgangen voor jet, programma's, licht en stand-by.

@@ -115,6 +115,21 @@ stand-by uit. De plugin implementeert het kinderslot van de EVA-webapp niet.
 
 ## Antwoorden en fouten
 
+### EVAstream-verlichting is grijs
+
+De EVA-webapp blokkeert zone 0 tijdens een lopende **of gepauzeerde** training.
+Stand-by heft die blokkering niet op. Vanaf 0.2.1 weigert de plugin daarom
+licht- en brightness-opdrachten naar die zone zolang de training deze beheert.
+Stop de sessie expliciet met `command=stop` of **Sessie stoppen** in de plugin
+als je de training wilt beeindigen. Herlaad daarna de EVA-webapp. Een lichtopdracht
+stopt of hervat de training niet automatisch. Andere zones blijven onafhankelijk
+bedienbaar. De statuscontrole is geen atomaire vergrendeling met andere apps:
+vermijd gelijktijdige trainings- en lichtopdrachten via verschillende bedieningen.
+
+Grijze bediening alleen bewijst niet dat de controller vastgelopen is. Controleer
+de bereikbaarheid en streamstatus. Zonder opdrachtenlog is de oorzaak van een
+onverwachte programmastatus niet met zekerheid vast te stellen.
+
 Status is tekst met een numerieke waarde per regel. Bedieningsopdrachten
 geven JSON met `ok`, `preview` en `output`. `ok=true` in voorbeeldmodus betekent
 dat het commando geldig is, niet dat hardware bediend is. HTTP 401: verkeerde

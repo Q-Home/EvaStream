@@ -4,7 +4,8 @@ Lokale bediening van EVA-verlichting, zwemstroming en trainingsprogramma's.
 Inclusief een zelfstandige Python-client voor Linux. Geen cloudaccount of
 extra Python-pakketten nodig.
 
-**Versie 0.2.0 — testversie.** Koppelt Loxone via virtuele HTTP-in- en
+**Versie 0.2.1 — testversie.** Respecteert de verlichtingsblokkering van
+zone 0 tijdens lopende en gepauzeerde trainingen. Koppelt Loxone via virtuele HTTP-in- en
 uitgangen, met statusuitlezing en een eigen toegangssleutel. Ondersteunt
 automatische updates en bevat de eerdere parametercorrectie.
 De API is afgeleid uit de webapp van een
@@ -84,7 +85,7 @@ python3 tools/build.py
 ```
 
 Tests gebruiken een lokale nepcontroller en activeren geen hardware.
-Het bouwscript maakt `dist/EvaStream-0.2.0.zip` met Unix-rechten en LF-regels,
+Het bouwscript maakt `dist/EvaStream-0.2.1.zip` met Unix-rechten en LF-regels,
 zonder tests, caches of persoonlijke instellingen.
 
 ## Automatische updates

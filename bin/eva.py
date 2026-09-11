@@ -37,6 +37,21 @@ class EVA:
     def get(self, path):
         return self.request('GET', path)
 
+    def check_light_control(self, zone):
+        if zone != 0:
+            return
+        status = self.get('/status')
+        stream = status.get('stream', {}) if isinstance(status, dict) else {}
+        state = stream.get('state')
+        if state not in ('idle', 'running', 'paused', 'stopped'):
+            raise ValueError('Lichtopdracht geweigerd: de trainingsstatus is onbekend.')
+        # The official webapp also locks zone 0 for paused training cues.
+        # Standby does not release ownership; standalone cue -2 is exempt.
+        if state in ('running', 'paused') and stream.get('cue') != -2:
+            raise ValueError('EVAstream-verlichting (zone 0) is geblokkeerd door een '
+                             'lopende of gepauzeerde training. Stop de sessie expliciet '
+                             'voordat je deze verlichting bedient. Er is niets verstuurd.')
+
     def apply(self, commands):
         for path, data in commands:
             print(('SEND' if self.execute else 'PREVIEW') + ' POST ' + path,
@@ -107,11 +122,13 @@ def main(argv=None):
         zones = eva.get('/zones')
         if args.zone >= len(zones):
             raise ValueError('Deze zone bestaat niet.')
+        eva.check_light_control(args.zone)
         commands = [('/intensity', {'zone': args.zone, 'intensity': args.percent})]
     elif command == 'light':
         zones = eva.get('/zones')
         if args.zone >= len(zones):
             raise ValueError('Deze zone bestaat niet.')
+        eva.check_light_control(args.zone)
         # Standby is global, so do not change it as a side effect of lighting.
         color = 'off' if args.brightness == 0 else args.color
         commands = [('/start_cue', {'id': COLORS[color], 'zone': args.zone})]

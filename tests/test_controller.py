@@ -16,13 +16,15 @@ import bridge
 class Handler(BaseHTTPRequestHandler):
     writes = []
     fail_path = None
+    status = {}
+    zones = []
 
     def log_message(self, *args):
         pass
 
     def do_GET(self):
-        data = {'/status': {'standby': True, 'stream': {'state': 'idle'}},
-                '/zones': [{'name': 'Pool', 'active': True}],
+        data = {'/status': self.status,
+                '/zones': self.zones,
                 '/users': [{'id': 0, 'slots': [{'program': 0, 'speed_gain': 65}]}],
                 '/programs': [{'id': 0, 'name': 'Training', 'cues': [{'id': 5}]},
                               {'id': 4, 'name': 'Custom', 'cues': [{'id': 8}]},
@@ -55,6 +57,8 @@ class ControllerTests(unittest.TestCase):
     def setUp(self):
         Handler.writes = []
         Handler.fail_path = None
+        Handler.status = {'standby': True, 'stream': {'state': 'idle'}}
+        Handler.zones = [{'name': 'Pool', 'active': True}]
         original = eva.EVA.__init__
         def local(client, *args, **kwargs):
             original(client, *args, **kwargs)
@@ -91,6 +95,37 @@ class ControllerTests(unittest.TestCase):
     def test_brightness_does_not_change_color_or_standby(self):
         self.assertTrue(self.run_command('brightness', {'percent':60,'zone':0})['ok'])
         self.assertEqual(Handler.writes, [('/intensity', {'zone':0,'intensity':60})])
+
+    def test_training_blocks_zone_zero_even_paused_in_standby(self):
+        for state in ('running', 'paused'):
+            for standby in (True, False):
+                Handler.status = {'standby':standby,'stream':{'state':state,'cue':4}}
+                for command, args in [('light', {'color':'blue'}),
+                                      ('light', {'color':'off'}),
+                                      ('brightness', {'percent':0}),
+                                      ('brightness', {'percent':60})]:
+                    result = self.run_command(command, args)
+                    self.assertFalse(result['ok'], result)
+                    self.assertIn('geblokkeerd', result['error'])
+        self.assertEqual(Handler.writes, [])
+
+    def test_standalone_swimming_does_not_lock_lighting(self):
+        for state in ('running', 'paused'):
+            Handler.status = {'standby':False,'stream':{'state':state,'cue':-2}}
+            self.assertTrue(self.run_command('light', {'color':'blue'})['ok'])
+
+    def test_other_light_zone_is_not_locked_by_training(self):
+        Handler.status = {'standby':False,'stream':{'state':'paused','cue':4}}
+        Handler.zones.append({'name':'Other','active':True})
+        self.assertTrue(self.run_command('light', {'color':'blue','zone':1})['ok'])
+        self.assertEqual(Handler.writes[0], ('/start_cue', {'id':261,'zone':1}))
+
+    def test_unknown_training_status_blocks_shared_zone(self):
+        for status in ({}, {'stream':{'state':'unexpected'}},
+                       {'stream':{'state':'paused'}}):
+            Handler.status = status
+            self.assertFalse(self.run_command('light', {'color':'blue'})['ok'])
+        self.assertEqual(Handler.writes, [])
 
     def test_jet_start_order_and_seconds(self):
         self.assertTrue(self.run_command('jet', {'speed':40,'minutes':15})['ok'])
